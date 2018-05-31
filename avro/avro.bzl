@@ -1,4 +1,4 @@
-_avro_filetype = FileType([".avsc"])
+_avro_filetypes = [".avpr"]
 
 def _commonprefix(m):
     if not m: return ''
@@ -47,7 +47,7 @@ def _new_generator_command(ctx, src_dir, gen_dir):
       encoding=ctx.attr.encoding
     )
 
-  gen_command += " schema {src} {gen_dir}".format(
+  gen_command += " protocol {src} {gen_dir}".format(
     src=src_dir,
     gen_dir=gen_dir
   )
@@ -95,7 +95,7 @@ def _impl(ctx):
 avro_gen = rule(
     attrs = {
         "srcs": attr.label_list(
-          allow_files = _avro_filetype
+          allow_files = _avro_filetypes
         ),
         "strings": attr.bool(),
         "encoding": attr.string(),
