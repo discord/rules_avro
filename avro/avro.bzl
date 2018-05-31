@@ -31,6 +31,14 @@ def avro_repositories():
       name = 'io_bazel_rules_avro/dependency/avro',
       actual = '@org_apache_avro_avro//jar',
   )
+  native.maven_jar(
+      name = "joda_time",
+      artifact = "joda-time:joda-time:2.10",
+  )
+  native.bind(
+      name = 'io_bazel_rules_avro/dependency/joda_time',
+      actual = '@joda_time//jar',
+  )
 
 
 def _new_generator_command(ctx, src_dir, gen_dir):
@@ -141,7 +149,8 @@ def avro_java_library(
         name=name,
         srcs=[name + '_srcjar'],
         deps = [
-          Label("//external:io_bazel_rules_avro/dependency/avro")
+          Label("//external:io_bazel_rules_avro/dependency/avro"),
+          Label("//external:io_bazel_rules_avro/dependency/joda_time"),
         ],
         visibility=visibility,
     )
