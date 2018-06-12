@@ -1,4 +1,4 @@
-_avro_filetypes = [".avpr"]
+_avro_filetypes = [".avsc", ".avpr"]
 
 def _commonprefix(m):
     if not m: return ''
@@ -13,7 +13,7 @@ def avro_repositories():
   # for code generation
   native.maven_jar(
       name = "org_apache_avro_avro_tools",
-      artifact = "org.apache.avro:avro-tools:1.8.1",
+      artifact = "org.apache.avro:avro-tools:1.8.2",
       sha1 = "361c32d4cad8dea8e5944d588e7d410f9f2a7114",
   )
   native.bind(
@@ -24,7 +24,7 @@ def avro_repositories():
   # for code compilation
   native.maven_jar(
       name = "org_apache_avro_avro",
-      artifact = "org.apache.avro:avro:1.8.1",
+      artifact = "org.apache.avro:avro:1.8.2",
       sha1 = "f4e11d00055760dca33daab193192bd75cc87b59",
   )
   native.bind(
