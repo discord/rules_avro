@@ -39,6 +39,22 @@ def avro_repositories():
       name = 'io_bazel_rules_avro/dependency/joda_time',
       actual = '@joda_time//jar',
   )
+  native.maven_jar(
+      name = "org_codehaus_jackson_jackson_core_asl",
+      artifact = "org.codehaus.jackson:jackson-core-asl:1.9.13",
+  )
+  native.bind(
+      name = 'io_bazel_rules_avro/dependency/jackson_core_asl',
+      actual = '@org_codehaus_jackson_jackson_core_asl//jar',
+  )
+  native.maven_jar(
+      name = "org_codehaus_jackson_jackson_mapper_asl",
+      artifact = "org.codehaus.jackson:jackson-mapper-asl:1.9.13",
+  )
+  native.bind(
+      name = 'io_bazel_rules_avro/dependency/jackson_mapper_asl',
+      actual = '@org_codehaus_jackson_jackson_mapper_asl//jar',
+  )
 
 
 def _new_generator_command(ctx, src_dir, gen_dir):
@@ -151,6 +167,10 @@ def avro_java_library(
         deps = [
           Label("//external:io_bazel_rules_avro/dependency/avro"),
           Label("//external:io_bazel_rules_avro/dependency/joda_time"),
+        ],
+        runtime_deps=[
+          Label("//external:io_bazel_rules_avro/dependency/jackson_core_asl"),
+          Label("//external:io_bazel_rules_avro/dependency/jackson_mapper_asl"),
         ],
         visibility=visibility,
     )
