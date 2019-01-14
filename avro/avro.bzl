@@ -78,7 +78,7 @@ avro_gen = rule(
         "strings": attr.bool(),
         "encoding": attr.string(),
         "_jdk": attr.label(
-          default=Label("//tools/defaults:jdk"),
+            default=Label("@bazel_tools//tools/jdk:current_java_runtime"),
           allow_files=True
         ),
         "_java": attr.label(
