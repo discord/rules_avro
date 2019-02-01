@@ -12,7 +12,7 @@ def _commonprefix(m):
     return s1
 
 def _new_generator_command(ctx, src_dir, gen_dir):
-  gen_command  = "{java} -jar {tool} compile ".format(
+  gen_command  = "{java} -jar {tool} compile".format(
      java=ctx.executable._java.path,
      tool=ctx.file._avro_tools.path,
   )
@@ -25,7 +25,8 @@ def _new_generator_command(ctx, src_dir, gen_dir):
       encoding=ctx.attr.encoding
     )
 
-  gen_command += " protocol {src} {gen_dir}".format(
+  gen_command += " {compile_type} {src} {gen_dir}".format(
+    compile_type=ctx.attr.compile_type,
     src=src_dir,
     gen_dir=gen_dir
   )
@@ -73,10 +74,15 @@ def _impl(ctx):
 avro_gen = rule(
     attrs = {
         "srcs": attr.label_list(
+          # TODO: This should change depending on compile_type, or we should split into multiple rules
           allow_files = _avro_filetypes
         ),
         "strings": attr.bool(),
         "encoding": attr.string(),
+        "compile_type": attr.string(
+          default="schema",
+          values=["schema", "protocol"],
+        ),
         "_jdk": attr.label(
             default=Label("@bazel_tools//tools/jdk:current_java_runtime"),
           allow_files=True
@@ -107,7 +113,7 @@ avro_gen = rule(
 
 
 def avro_java_library(
-  name, srcs=[], strings=None, encoding=None, visibility=None):
+  name, srcs=[], strings=None, encoding=None, compile_time=None, visibility=None):
     avro_gen(
         name=name + '_srcjar',
         srcs = srcs,
