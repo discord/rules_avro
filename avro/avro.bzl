@@ -12,8 +12,10 @@ def _commonprefix(m):
     return s1
 
 def _new_generator_command(ctx, src_dir, gen_dir):
+  java_runtime = ctx.attr._jdk[java_common.JavaRuntimeInfo]
+  java_path = "%s/bin/java" % java_runtime.java_home
   gen_command  = "{java} -jar {tool} compile".format(
-     java=ctx.executable._java.path,
+     java=java_path,
      tool=ctx.file._avro_tools.path,
   )
 
@@ -40,22 +42,23 @@ def _impl(ctx):
     gen_dir = "{out}-tmp".format(
          out=ctx.outputs.codegen.path
     )
+    java_runtime = ctx.attr._jdk[java_common.JavaRuntimeInfo]
+    jar_path = "%s/bin/jar" % java_runtime.java_home
     commands = [
         "mkdir -p {gen_dir}".format(gen_dir=gen_dir),
         _new_generator_command(ctx, src_dir, gen_dir),
         # forcing a timestamp for deterministic artifacts
-        "find {gen_dir} -exec touch -t 198001010000 {{}} \;".format(
+        "find {gen_dir} -exec touch -d @0 {{}} \;".format(
           gen_dir=gen_dir
         ),
         "{jar} cMf {output} -C {gen_dir} .".format(
-          jar=ctx.file._jar.path,
+          jar=jar_path,
           output=ctx.outputs.codegen.path,
           gen_dir=gen_dir
         )
     ]
 
     inputs = ctx.files.srcs + ctx.files._jdk + [
-      ctx.executable._java,
       ctx.file._avro_tools,
     ]
 
@@ -85,19 +88,7 @@ avro_gen = rule(
         ),
         "_jdk": attr.label(
             default=Label("@bazel_tools//tools/jdk:current_java_runtime"),
-          allow_files=True
-        ),
-        "_java": attr.label(
-            executable = True,
-            cfg = "host",
-            default = Label("@bazel_tools//tools/jdk:java"),
-            single_file = True,
-            allow_files = True,
-        ),
-        "_jar": attr.label(
-            default=Label("@bazel_tools//tools/jdk:jar"),
-            allow_files=True,
-            single_file=True
+            providers = [java_common.JavaRuntimeInfo],
         ),
         "_avro_tools": attr.label(
             cfg = "host",
