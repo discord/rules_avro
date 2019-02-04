@@ -113,9 +113,10 @@ avro_gen = rule(
 
 
 def avro_java_library(
-  name, srcs=[], strings=None, encoding=None, compile_time=None, visibility=None):
+  name, srcs=[], strings=None, encoding=None, compile_type=None, visibility=None):
     avro_gen(
         name=name + '_srcjar',
+        compile_type = compile_type,
         srcs = srcs,
         strings=strings,
         encoding=encoding,
