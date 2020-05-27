@@ -5,9 +5,9 @@ def avro_repositories():
     name = "rules_avro_maven",
     artifacts = [
       # for code compilation
-      "org.apache.avro:avro:1.8.2",
+      "org.apache.avro:avro:1.9.2",
       # for code generation
-      "org.apache.avro:avro-tools:1.8.2",
+      "org.apache.avro:avro-tools:1.9.2",
     ],
     repositories = [
       "https://repo1.maven.org/maven2/",
