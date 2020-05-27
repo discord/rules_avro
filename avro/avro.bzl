@@ -118,8 +118,6 @@ def avro_java_library(
         srcs=[name + '_srcjar'],
         deps=[
           Label("@rules_avro_maven//:org_apache_avro_avro"),
-        ],
-        runtime_deps=[
           Label("@rules_avro_maven//:joda_time_joda_time"),
         ],
         visibility=visibility,
