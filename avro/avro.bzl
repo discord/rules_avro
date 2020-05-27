@@ -92,7 +92,7 @@ avro_gen = rule(
         ),
         "_avro_tools": attr.label(
             cfg = "host",
-            default = Label("//external:io_bazel_rules_avro/dependency/avro_tools"),
+            default = Label("@rules_avro_maven//:org_apache_avro_avro_tools"),
             allow_single_file = True,
         )
     },
@@ -116,13 +116,11 @@ def avro_java_library(
     native.java_library(
         name=name,
         srcs=[name + '_srcjar'],
-        deps = [
-          Label("//external:io_bazel_rules_avro/dependency/avro"),
-          Label("//external:io_bazel_rules_avro/dependency/joda_time"),
+        deps=[
+          Label("@rules_avro_maven//:org_apache_avro_avro"),
         ],
         runtime_deps=[
-          Label("//external:io_bazel_rules_avro/dependency/jackson_core_asl"),
-          Label("//external:io_bazel_rules_avro/dependency/jackson_mapper_asl"),
+          Label("@rules_avro_maven//:joda_time_joda_time"),
         ],
         visibility=visibility,
     )
