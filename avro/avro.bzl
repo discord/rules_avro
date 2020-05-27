@@ -22,6 +22,8 @@ def _new_generator_command(ctx, src_dir, gen_dir):
   if ctx.attr.strings:
     gen_command += " -string"
 
+  gen_command += " -dateTimeLogicalTypeImpl {}".format(ctx.attr.date_time_logical_type_impl)
+
   if ctx.attr.encoding:
     gen_command += " -encoding {encoding}".format(
       encoding=ctx.attr.encoding
@@ -81,6 +83,10 @@ avro_gen = rule(
           allow_files = _avro_filetypes
         ),
         "strings": attr.bool(),
+        "date_time_logical_type_impl": attr.string(
+          default="joda",
+          values=["joda", "jsr310"],
+        ),
         "encoding": attr.string(),
         "compile_type": attr.string(
           default="schema",
