@@ -1,3 +1,5 @@
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
 def _commonprefix(m):
     if not m: return ''
     s1 = min(m)
@@ -11,28 +13,18 @@ def _commonprefix(m):
     return s1
 
 def avro_repositories():
-  # for code generation
-  native.maven_jar(
-      name = "org_apache_avro_avro_tools",
-      artifact = "org.apache.avro:avro-tools:1.8.1",
-      sha1 = "361c32d4cad8dea8e5944d588e7d410f9f2a7114",
+  maven_install(
+    name = "rules_avro_maven",
+    artifacts = [
+      # for code compilation
+      "org.apache.avro:avro:1.8.1",
+      # for code generation
+      "org.apache.avro:avro-tools:1.8.1",
+    ],
+    repositories = [
+      "https://repo1.maven.org/maven2/",
+    ],
   )
-  native.bind(
-      name = 'io_bazel_rules_avro/dependency/avro_tools',
-      actual = '@org_apache_avro_avro_tools//jar',
-  )
-
-  # for code compilation
-  native.maven_jar(
-      name = "org_apache_avro_avro",
-      artifact = "org.apache.avro:avro:1.8.1",
-      sha1 = "f4e11d00055760dca33daab193192bd75cc87b59",
-  )
-  native.bind(
-      name = 'io_bazel_rules_avro/dependency/avro',
-      actual = '@org_apache_avro_avro//jar',
-  )
-
 
 def _new_generator_command(ctx, src_dir, gen_dir):
   java_path = ctx.attr._jdk[java_common.JavaRuntimeInfo].java_executable_exec_path
@@ -81,7 +73,7 @@ def _impl(ctx):
       ctx.file._avro_tools,
     ]
 
-    ctx.action(
+    ctx.actions.run_shell(
         inputs = inputs,
         outputs = [ctx.outputs.codegen],
         command = " && ".join(commands),
@@ -106,7 +98,7 @@ avro_gen = rule(
                 ),
         "_avro_tools": attr.label(
             cfg = "host",
-            default = Label("//external:io_bazel_rules_avro/dependency/avro_tools"),
+            default = Label("@rules_avro_maven//:org_apache_avro_avro_tools"),
             allow_single_file = True,
         )
     },
@@ -130,7 +122,7 @@ def avro_java_library(
         name=name,
         srcs=[name + '_srcjar'],
         deps = [
-          Label("//external:io_bazel_rules_avro/dependency/avro")
+          Label("@rules_avro_maven//:org_apache_avro_avro")
         ],
         visibility=visibility,
     )
